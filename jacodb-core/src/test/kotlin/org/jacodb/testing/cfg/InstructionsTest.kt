@@ -299,6 +299,15 @@ class InstructionsTest : BaseInstructionsTest() {
     }
 
     @Test
+    fun `lambda test`() {
+        val clazz = cp.findClass<Lambdas>()
+        val javaClazz = testAndLoadClass(clazz)
+        val method = javaClazz.methods.first { it.name == "lambdaTest" }
+        val res = method.invoke(null)
+        assertNull(res)
+    }
+
+    @Test
     fun `iinc arrayByteIdx should work`() {
         val clazz = cp.findClass<Incrementation>()
 
