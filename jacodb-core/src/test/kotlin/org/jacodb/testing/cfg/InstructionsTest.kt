@@ -289,6 +289,16 @@ class InstructionsTest : BaseInstructionsTest() {
     }
 
     @Test
+    fun `condition in for should work`() {
+        val clazz = cp.findClass<Conditionals>()
+
+        val javaClazz = testAndLoadClass(clazz)
+        val method = javaClazz.methods.first { it.name == "conditionInFor" }
+        val res = method.invoke(null)
+        assertNull(res)
+    }
+
+    @Test
     fun `iinc arrayByteIdx should work`() {
         val clazz = cp.findClass<Incrementation>()
 
