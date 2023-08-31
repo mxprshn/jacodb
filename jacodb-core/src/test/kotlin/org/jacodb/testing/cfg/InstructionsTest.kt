@@ -36,6 +36,7 @@ import org.jacodb.testing.Common.CommonClass
 import org.jacodb.testing.WithDB
 import org.jacodb.testing.cfg.RealMethodResolution.Virtual
 import org.jacodb.testing.cfg.RealMethodResolution.VirtualImpl
+import org.jacodb.testing.hierarchies.Inheritance
 import org.jacodb.testing.primitives.Primitives
 import org.jacodb.testing.structure.FieldsAndMethods
 import org.junit.jupiter.api.Assertions.*
@@ -306,6 +307,34 @@ class InstructionsTest : BaseInstructionsTest() {
         val res = method.invoke(null)
         assertNull(res)
     }
+
+    @Test
+    fun `hierarchy test`() {
+        val clazz = cp.findClass<Inheritance>()
+        val javaClazz = testAndLoadClass(clazz)
+        val method = javaClazz.methods.first { it.name == "test" }
+        val res = method.invoke(null)
+        assertNull(res)
+    }
+
+    @Test
+    fun `instance method ref bug`() {
+        val clazz = cp.findClass<Close>()
+        val javaClazz = testAndLoadClass(clazz)
+        val method = javaClazz.methods.first { it.name == "test" }
+        val res = method.invoke(null)
+        assertNull(res)
+    }
+
+    @Test
+    fun `big decimal test`() {
+        val clazz = cp.findClass<MultiplyTests>()
+        val javaClazz = testAndLoadClass(clazz)
+        val method = javaClazz.methods.first { it.name == "test" }
+        val res = method.invoke(null)
+        assertNull(res)
+    }
+
 
     @Test
     fun `iinc arrayByteIdx should work`() {
