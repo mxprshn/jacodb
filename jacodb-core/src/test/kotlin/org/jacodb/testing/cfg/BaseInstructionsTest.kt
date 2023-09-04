@@ -52,18 +52,15 @@ abstract class BaseInstructionsTest : BaseTest() {
         try {
             val classNode = klass.asmNode()
             classNode.methods = klass.declaredMethods.filter { it.enclosingClass == klass }.map {
+                println(it.name)
                 if (it.isAbstract || it.name.contains("$\$forInline")) {
                     it.asmNode()
                 } else {
                     try {
-//            val oldBody = it.body()
-//            println()
-//            println("Old body: ${oldBody.print()}")
                         val instructionList = it.rawInstList
                         it.instList.forEachIndexed { index, inst ->
                             Assertions.assertEquals(index, inst.location.index, "indexes not matched for $it at $index")
                         }
-//            println("Instruction list: $instructionList")
                         val graph = it.flowGraph()
                         if (!it.enclosingClass.isKotlin) {
                             val methodMsg = "$it should have line number"
@@ -73,14 +70,10 @@ abstract class BaseInstructionsTest : BaseTest() {
                         }
                         graph.applyAndGet(OverridesResolver(ext)) {}
                         JcGraphChecker(it, graph).check()
-//            println("Graph: $graph")
-//            graph.view("/usr/bin/dot", "/usr/bin/firefox", false)
-//            graph.blockGraph().view("/usr/bin/dot", "/usr/bin/firefox")
                         val newBody = MethodNodeBuilder(it, instructionList).build()
-//            println("New body: ${newBody.print()}")
-//            println()
                         newBody
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
+                        it.dumpInstructions()
                         throw IllegalStateException("error handling $it", e)
                     }
 

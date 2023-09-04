@@ -229,7 +229,6 @@ internal class Simplifier {
     }
 }
 
-
 private class SimplifierCollector : AbstractFullRawExprSetCollector() {
     val exprs = hashSetOf<JcRawSimpleValue>()
 
@@ -239,4 +238,21 @@ private class SimplifierCollector : AbstractFullRawExprSetCollector() {
         }
     }
 
+}
+
+private class RawLocalVarCollector(private val localVar: JcRawValue) : AbstractFullRawExprSetCollector() {
+
+    var hasVar = false
+
+    override fun ifMatches(expr: JcRawExpr) {
+        if (!hasVar) {
+            hasVar = expr is JcRawValue && expr == localVar
+        }
+    }
+}
+
+fun JcRawInst.hasExpr(variable: JcRawValue): Boolean {
+    return RawLocalVarCollector(variable).also {
+        accept(it)
+    }.hasVar
 }
