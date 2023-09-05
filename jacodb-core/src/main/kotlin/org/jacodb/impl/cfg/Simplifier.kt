@@ -229,7 +229,6 @@ internal class Simplifier {
     }
 }
 
-
 private class SimplifierCollector : AbstractFullRawExprSetCollector() {
     val exprs = hashSetOf<JcRawSimpleValue>()
 
