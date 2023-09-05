@@ -252,7 +252,9 @@ class RawInstListBuilder(
             for ((variable, value) in assignments) {
                 val frameVariable = frame[variable]
                 if (frameVariable != null && value != frameVariable) {
-                    if (insn.isBranchingInst || insn.isTerminateInst) {
+                    if (insn.isBranchingInst) {
+                        insnList.addInst(insn, JcRawAssignInst(method, value, frameVariable), 0)
+                    }else if(insn.isTerminateInst) {
                         insnList.addInst(insn, JcRawAssignInst(method, value, frameVariable), insnList.lastIndex)
                     } else {
                         insnList.addInst(insn, JcRawAssignInst(method, value, frameVariable))
@@ -271,16 +273,6 @@ class RawInstListBuilder(
                         insnList.addInst(insn, JcRawAssignInst(method, value, frame.stack[variable]))
                     }
                 }
-            }
-        }
-    }
-
-    private fun buildRequiredAssignments2() {
-        for ((insn, assignments) in laterAssignments) {
-            println(insn)
-            for ((variable, value) in assignments) {
-                println(variable)
-                println(value)
             }
         }
     }
@@ -392,8 +384,10 @@ class RawInstListBuilder(
             if (oldVar.typeName == expr.typeName || (expr is JcRawNullConstant && !oldVar.typeName.isPrimitive)) {
                 if (override) {
                     currentFrame = currentFrame.put(variable, expr)
+                    JcRawAssignInst(method, expr, expr)
+                } else {
+                    JcRawAssignInst(method, oldVar, expr)
                 }
-                JcRawAssignInst(method, oldVar, expr)
             } else if (expr is JcRawSimpleValue) {
                 currentFrame = currentFrame.put(variable, expr)
                 null
@@ -1024,7 +1018,8 @@ class RawInstListBuilder(
         val local = local(variable)
         val incrementedVariable = when {
             nextInst != null && nextInst.isBranchingInst -> local
-            nextInst != null && nextInst is VarInsnNode && nextInst.`var` == variable -> local
+            nextInst != null && (
+                    (nextInst is VarInsnNode && nextInst.`var` == variable) || nextInst is LabelNode) -> local
             else -> nextRegister(local.typeName)
         }
         val add = JcRawAddExpr(local.typeName, local, JcRawInt(insnNode.incr))
