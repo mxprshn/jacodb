@@ -271,7 +271,7 @@ class MethodNodeBuilder(
                 cond.lhv == zeroValue -> {
                     cond.rhv.accept(this)
                     elseBranchTarget = trueTarget
-                    JumpInsnNode(zeroCmpOpcode, trueTarget)
+                    JumpInsnNode(zeroCmpOpcode, falseTarget)
                 }
 
                 cond.rhv == zeroValue -> {
