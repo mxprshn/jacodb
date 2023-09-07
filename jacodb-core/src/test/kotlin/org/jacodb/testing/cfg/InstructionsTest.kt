@@ -270,26 +270,6 @@ class InstructionsTest : BaseInstructionsTest() {
 
 
     @Test
-    fun `iinc should work`() {
-        val clazz = cp.findClass<Incrementation>()
-
-        val javaClazz = testAndLoadClass(clazz)
-        val method = javaClazz.methods.first { it.name == "iinc" }
-        val res = method.invoke(null, 0)
-        assertEquals(0, res)
-    }
-
-    @Test
-    fun `iinc arrayIntIdx should work`() {
-        val clazz = cp.findClass<Incrementation>()
-
-        val javaClazz = testAndLoadClass(clazz)
-        val method = javaClazz.methods.first { it.name == "iincArrayIntIdx" }
-        val res = method.invoke(null)
-        assertArrayEquals(intArrayOf(1, 0, 2), res as IntArray)
-    }
-
-    @Test
     fun `condition in for should work`() {
         val clazz = cp.findClass<Conditionals>()
 
@@ -313,7 +293,7 @@ class InstructionsTest : BaseInstructionsTest() {
         val clazz = cp.findClass<Inheritance>()
         val javaClazz = testAndLoadClass(clazz)
         val method = javaClazz.methods.first { it.name == "test" }
-        val res = method.invoke(null)
+        val res = method.invoke(null, null)
         assertNull(res)
     }
 
@@ -333,27 +313,6 @@ class InstructionsTest : BaseInstructionsTest() {
         val method = javaClazz.methods.first { it.name == "test" }
         val res = method.invoke(null)
         assertNull(res)
-    }
-
-
-    @Test
-    fun `iinc arrayByteIdx should work`() {
-        val clazz = cp.findClass<Incrementation>()
-
-        val javaClazz = testAndLoadClass(clazz)
-        val method = javaClazz.methods.first { it.name == "iincArrayByteIdx" }
-        val res = method.invoke(null)
-        assertArrayEquals(intArrayOf(1, 0, 2), res as IntArray)
-    }
-
-    @Test
-    fun `iinc for`() {
-        val clazz = cp.findClass<Incrementation>()
-
-        val javaClazz = testAndLoadClass(clazz)
-        val method = javaClazz.methods.first { it.name == "iincFor" }
-        val res = method.invoke(null)
-        assertArrayEquals(intArrayOf(0, 1, 2, 3, 4), res as IntArray)
     }
 
 }

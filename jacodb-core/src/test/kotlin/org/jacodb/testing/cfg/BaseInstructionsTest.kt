@@ -52,6 +52,7 @@ abstract class BaseInstructionsTest : BaseTest() {
         try {
             val classNode = klass.asmNode()
             classNode.methods = klass.declaredMethods.filter { it.enclosingClass == klass }.map {
+                println(it.name)
                 if (it.isAbstract || it.name.contains("$\$forInline")) {
                     it.asmNode()
                 } else {
