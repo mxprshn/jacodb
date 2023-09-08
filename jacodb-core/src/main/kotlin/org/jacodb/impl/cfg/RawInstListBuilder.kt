@@ -191,6 +191,7 @@ class RawInstListBuilder(
     private val laterAssignments = identityMap<AbstractInsnNode, MutableMap<Int, JcRawValue>>()
     private val laterStackAssignments = identityMap<AbstractInsnNode, MutableMap<Int, JcRawValue>>()
     private val localTypeRefinement = identityMap<JcRawLocalVar, JcRawLocalVar>()
+    private val blackListForTypeRefinement = listOf(TOP, NULL, UNINIT_THIS)
     private val postfixInstructions = hashMapOf<Int, JcRawInst>()
 
     private var labelCounter = 0
@@ -875,7 +876,7 @@ class RawInstListBuilder(
 
                     else -> frame.locals.filterKeys { it in this }.mapValues {
                         when {
-                            it.value is JcRawLocalVar && it.value.typeName != this[it.key]!! && this[it.key] != TOP -> JcRawLocalVar(
+                            it.value is JcRawLocalVar && it.value.typeName != this[it.key]!! && this[it.key] !in blackListForTypeRefinement -> JcRawLocalVar(
                                 (it.value as JcRawLocalVar).name,
                                 this[it.key]!!
                             ).also { newLocal ->
@@ -949,7 +950,7 @@ class RawInstListBuilder(
 
                 else -> frame.stack.withIndex().filter { it.index in this }.map {
                     when {
-                        it.value is JcRawLocalVar && it.value.typeName != this[it.index]!! && this[it.index] != TOP -> JcRawLocalVar(
+                        it.value is JcRawLocalVar && it.value.typeName != this[it.index]!! && this[it.index] !in blackListForTypeRefinement -> JcRawLocalVar(
                             (it.value as JcRawLocalVar).name,
                             this[it.index]!!
                         ).also { newLocal ->
