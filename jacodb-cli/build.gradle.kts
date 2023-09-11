@@ -9,3 +9,16 @@ dependencies {
 
     testImplementation(testFixtures(project(":jacodb-core")))
 }
+
+task("run", JavaExec::class) {
+    mainClass.set("org.jacodb.cli.MainKt")
+    doFirst {
+        classpath = sourceSets["main"].runtimeClasspath
+        val analysisConfigPath = project.property("analysisConfigPath")
+        val startClasses = project.property("startClasses")
+        val classpath = project.property("classpath")
+        val reportPath = project.findProperty("reportPath")
+        val reportPathArgument = if (reportPath == null) "" else "-o \"$reportPath\""
+        args = listOf("-a \"$analysisConfigPath\" -s \"$startClasses\" -cp \"$classpath\" $reportPathArgument")
+    }
+}
